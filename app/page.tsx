@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { Toaster } from "sonner";
 import { useAppStore } from "@/store/useAppStore";
+import { useT } from "@/lib/useT";
 import Topbar from "@/components/Topbar";
 import EditorPanel from "@/components/EditorPanel";
 import PreviewPanel from "@/components/PreviewPanel";
@@ -13,6 +14,7 @@ import TemplateGallery from "@/components/TemplateGallery";
 export default function Home() {
   const hydrate = useAppStore((s) => s.hydrate);
   const hasInput = useAppStore((s) => s.input.trim().length > 0);
+  const t = useT();
 
   useEffect(() => {
     hydrate();
@@ -29,7 +31,7 @@ export default function Home() {
         <div className="flex min-h-0 min-w-0 flex-1 flex-col md:flex-row">
           {/* 입력은 항상 보인다 */}
           <section
-            aria-label="입력 패널"
+            aria-label={t("input.label")}
             className="flex min-h-0 flex-1 flex-col border-b border-border bg-surface md:flex-none md:basis-1/2 md:border-b-0 md:border-r"
           >
             <EditorPanel />
@@ -37,7 +39,7 @@ export default function Home() {
 
           {/* 오른쪽만 갤러리 ↔ 결과 전환 */}
           <section
-            aria-label={hasInput ? "결과 패널" : "템플릿 갤러리"}
+            aria-label={hasInput ? t("result.label") : t("gallery.heading")}
             className="flex min-h-0 flex-1 flex-col bg-surface md:flex-none md:basis-1/2"
           >
             {hasInput ? <PreviewPanel /> : <TemplateGallery />}
@@ -54,10 +56,7 @@ export default function Home() {
 
       {/* 푸터 */}
       <footer className="flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5 border-t border-border bg-surface px-4 py-1.5 text-center text-xs text-muted">
-        <span>
-          이 도구의 모든 변환은 당신의 브라우저 안에서만 처리됩니다. 입력한
-          텍스트는 어디에도 전송·저장되지 않습니다.
-        </span>
+        <span>{t("footer.privacy")}</span>
         <span className="text-faint">·</span>
         <span>
           © uzzano ·{" "}
@@ -65,7 +64,7 @@ export default function Home() {
             href="mailto:uzzano.info@gmail.com"
             className="underline hover:text-text"
           >
-            문의
+            {t("footer.contact")}
           </a>
         </span>
       </footer>

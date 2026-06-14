@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Code2 } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
+import { useT } from "@/lib/useT";
 import OutputFormatTabs from "./OutputFormatTabs";
 import SummaryChips from "./SummaryChips";
 import DiffView from "./DiffView";
@@ -17,24 +18,27 @@ export default function PreviewPanel() {
   const warnedSimplified = useAppStore((s) => s.warnedSimplified);
   const fallback = useAppStore((s) => s.fallback);
 
+  const t = useT();
   const [showHtmlCode, setShowHtmlCode] = useState(false);
 
   const warnedOnce = useRef(false);
   useEffect(() => {
     if (warnedSimplified && !warnedOnce.current) {
       warnedOnce.current = true;
-      toast.warning("일부 서식은 단순화되었어요");
+      toast.warning(t("toast.simplified"));
     }
     if (!warnedSimplified) warnedOnce.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [warnedSimplified]);
 
   const fallbackOnce = useRef(false);
   useEffect(() => {
     if (fallback && !fallbackOnce.current) {
       fallbackOnce.current = true;
-      toast.error("변환에 실패해 원문을 그대로 표시합니다");
+      toast.error(t("toast.fallback"));
     }
     if (!fallback) fallbackOnce.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fallback]);
 
   const isEmpty = input.trim().length === 0;
@@ -44,7 +48,7 @@ export default function PreviewPanel() {
       {/* 상단 바: RESULT + Clean/Diff 토글 */}
       <div className="flex items-center justify-between px-4 pt-3">
         <span className="text-[13px] font-semibold tracking-wide text-muted">
-          RESULT
+          {t("result.label")}
         </span>
         {!isEmpty && (
           <div className="flex rounded-sm border border-border bg-surface-2 p-0.5">
@@ -60,7 +64,7 @@ export default function PreviewPanel() {
                     : "text-muted hover:text-text"
                 }`}
               >
-                {m === "clean" ? "결과 보기" : "변화 보기"}
+                {m === "clean" ? t("result.clean") : t("result.diff")}
               </button>
             ))}
           </div>
@@ -73,9 +77,7 @@ export default function PreviewPanel() {
       <div className="min-h-0 flex-1 overflow-auto px-4 py-3">
         {isEmpty ? (
           <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-faint">
-              정리된 결과가 여기에 나타납니다
-            </p>
+            <p className="text-sm text-faint">{t("result.placeholder")}</p>
           </div>
         ) : viewMode === "diff" ? (
           <DiffView />
@@ -88,7 +90,7 @@ export default function PreviewPanel() {
                 className="inline-flex items-center gap-1 text-xs text-muted hover:text-text"
               >
                 <Code2 size={13} />
-                {showHtmlCode ? "미리보기 보기" : "HTML 코드 보기"}
+                {showHtmlCode ? t("result.showPreview") : t("result.showHtml")}
               </button>
             </div>
             {showHtmlCode ? (

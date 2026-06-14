@@ -1,5 +1,7 @@
-/** Empty state "예시로 체험하기"용 샘플 (전형적인 ChatGPT 스타일). */
-export const SAMPLE_INPUT = `## 🚀 React로 할 일 앱 만들기
+import type { Lang } from "./i18n";
+
+/** Empty state "Try an example"용 샘플 (전형적인 ChatGPT 스타일). */
+const SAMPLE_KO = `## 🚀 React로 할 일 앱 만들기
 
 안녕하세요! 오늘은 **아주 쉽게** React 할 일 앱을 만들어볼게요. 😊
 
@@ -23,3 +25,32 @@ export const SAMPLE_INPUT = `## 🚀 React로 할 일 앱 만들기
 
 자, 이제 시작해볼까요? 💪
 `;
+
+const SAMPLE_EN = `## 🚀 Building a To-Do App with React
+
+Hi there! Today we'll build a React to-do app **super easily**. 😊
+
+### 📦 What you'll need
+
+- **Node.js**: the latest LTS version
+- **Editor**: VS Code is recommended ✨
+- **Terminal**: the default terminal is fine
+
+---
+
+### 🛠️ Getting started
+
+1. Create the project
+3. Install dependencies
+7. Run the dev server
+
+**If you've made it this far, you're halfway done!** 🎉
+
+---
+
+Alright, shall we begin? 💪
+`;
+
+export function sampleInput(lang: Lang): string {
+  return lang === "ko" ? SAMPLE_KO : SAMPLE_EN;
+}

@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
+import { useT } from "@/lib/useT";
 
 type Theme = "light" | "dark";
 
 export default function ThemeToggle() {
+  const t = useT();
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"}
+      aria-label={theme === "dark" ? t("theme.toLight") : t("theme.toDark")}
       className="flex h-8 w-8 items-center justify-center rounded-sm text-muted transition-colors hover:bg-surface-2 hover:text-text"
     >
       {theme === "dark" ? <Moon size={18} /> : <Sun size={18} />}

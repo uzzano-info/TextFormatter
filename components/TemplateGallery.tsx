@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { Sparkles } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
+import { useT } from "@/lib/useT";
 import TemplateCard from "./TemplateCard";
 
 export default function TemplateGallery() {
@@ -10,6 +11,7 @@ export default function TemplateGallery() {
   const activePresetId = useAppStore((s) => s.activePresetId);
   const applyPreset = useAppStore((s) => s.applyPreset);
   const loadSample = useAppStore((s) => s.loadSample);
+  const t = useT();
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const builtIns = presets.filter((p) => p.builtIn);
@@ -28,11 +30,9 @@ export default function TemplateGallery() {
       <div className="mx-auto flex w-full max-w-md flex-col">
         <div className="mb-4">
           <h2 className="text-[16px] font-semibold text-text">
-            어디에 쓸지 고르세요
+            {t("gallery.heading")}
           </h2>
-          <p className="mt-1 text-sm text-muted">
-            왼쪽에 붙여넣으면 바로 정리해 드려요. 용도를 고르면 더 알맞게 다듬어요.
-          </p>
+          <p className="mt-1 text-sm text-muted">{t("gallery.sub")}</p>
         </div>
 
         <div ref={containerRef} className="flex flex-col gap-3">
@@ -50,7 +50,7 @@ export default function TemplateGallery() {
         {userTemplates.length > 0 && (
           <div className="mt-5">
             <p className="mb-2 text-[13px] font-semibold tracking-wide text-muted">
-              내 템플릿
+              {t("gallery.myTemplates")}
             </p>
             <div className="flex flex-col gap-3">
               {userTemplates.map((p) => (
@@ -72,7 +72,7 @@ export default function TemplateGallery() {
             className="inline-flex items-center gap-1.5 rounded-sm border border-border bg-surface px-3 py-2 text-sm font-medium text-text transition-colors hover:bg-surface-2"
           >
             <Sparkles size={15} className="text-accent" />
-            예시로 체험하기
+            {t("gallery.trySample")}
           </button>
         </div>
       </div>

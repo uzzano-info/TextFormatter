@@ -14,7 +14,8 @@ import {
   CleanupStats,
   EMPTY_STATS,
 } from "@/lib/transform/computeStats";
-import { SAMPLE_INPUT } from "@/lib/sampleInput";
+import { sampleInput } from "@/lib/sampleInput";
+import { Lang, DEFAULT_LANG, LANG_KEY, translate } from "@/lib/i18n";
 import {
   DEFAULT_PRESETS,
   DEFAULT_PRESET_ID,
@@ -39,6 +40,7 @@ interface AppState {
 
   viewMode: "clean" | "diff";
   optionsOpen: boolean; // 세부조정 드로어
+  lang: Lang;
 
   // 파생 결과 (직접 set 금지 — recompute로만 갱신)
   output: string;
@@ -49,6 +51,7 @@ interface AppState {
   setInput: (v: string) => void;
   setViewMode: (m: "clean" | "diff") => void;
   setOptionsOpen: (v: boolean) => void;
+  setLang: (l: Lang) => void;
   loadSample: () => void;
   setOption: <K extends keyof NormalizeOptions>(
     key: K,
@@ -103,6 +106,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   presets: DEFAULT_PRESETS,
   viewMode: "clean",
   optionsOpen: false,
+  lang: DEFAULT_LANG,
   output: "",
   warnedSimplified: false,
   fallback: false,
@@ -111,8 +115,20 @@ export const useAppStore = create<AppState>((set, get) => ({
   setViewMode: (m) => set({ viewMode: m }),
   setOptionsOpen: (v) => set({ optionsOpen: v }),
 
+  setLang: (l) => {
+    set({ lang: l });
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem(LANG_KEY, l);
+        document.documentElement.lang = l;
+      }
+    } catch {
+      /* ignore */
+    }
+  },
+
   loadSample: () => {
-    get().setInput(SAMPLE_INPUT);
+    get().setInput(sampleInput(get().lang));
   },
 
   setInput: (v) => {
@@ -172,12 +188,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   saveCurrentAsPreset: (name) => {
-    const { options, outputFormat, blogTarget, presets } = get();
+    const { options, outputFormat, blogTarget, presets, lang } = get();
     const preset: Preset = {
       id: nanoid(),
-      name: name.trim() || "내 템플릿",
+      name: name.trim() || translate(lang, "tmpl.defaultName"),
       icon: "star",
-      tagline: "내가 저장한 템플릿",
+      tagline: translate(lang, "tmpl.defaultTagline"),
       targets: [],
       options,
       outputFormat,
@@ -212,6 +228,17 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   hydrate: () => {
+    // 언어 복원 (기본 영어)
+    try {
+      if (typeof window !== "undefined") {
+        const savedLang = localStorage.getItem(LANG_KEY);
+        const lang: Lang = savedLang === "ko" ? "ko" : "en";
+        set({ lang });
+        document.documentElement.lang = lang;
+      }
+    } catch {
+      /* ignore */
+    }
     const userPresets = loadUserPresets();
     const presets = [...DEFAULT_PRESETS, ...userPresets];
     const last = loadLastState();

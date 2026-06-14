@@ -1,6 +1,7 @@
 "use client";
 
 import { useAppStore } from "@/store/useAppStore";
+import { useT } from "@/lib/useT";
 import type { NormalizeOptions } from "@/lib/transform/types";
 import Switch from "./Switch";
 
@@ -8,32 +9,28 @@ type BoolKey = {
   [K in keyof NormalizeOptions]: NormalizeOptions[K] extends boolean ? K : never;
 }[keyof NormalizeOptions];
 
-const GROUPS: { title: string; items: { key: BoolKey; label: string }[] }[] = [
+const GROUPS: { titleKey: string; items: BoolKey[] }[] = [
   {
-    title: "정리",
+    titleKey: "opt.group.clean",
     items: [
-      { key: "stripEmoji", label: "이모지 제거" },
-      { key: "stripEmojiInHeadings", label: "헤더 이모지만 제거" },
-      { key: "normalizeBold", label: "굵게 정리" },
-      { key: "unwrapListLeadBold", label: "리스트 리드 굵게 해제" },
-      { key: "removeHr", label: "구분선 제거" },
+      "stripEmoji",
+      "stripEmojiInHeadings",
+      "normalizeBold",
+      "unwrapListLeadBold",
+      "removeHr",
     ],
   },
   {
-    title: "구조",
-    items: [
-      { key: "simplifyHeadings", label: "헤더 정리" },
-      { key: "normalizeListMarker", label: "불릿 통일 (-)" },
-      { key: "normalizeOrderedList", label: "번호 재정렬" },
-    ],
+    titleKey: "opt.group.structure",
+    items: ["simplifyHeadings", "normalizeListMarker", "normalizeOrderedList"],
   },
   {
-    title: "다듬기",
+    titleKey: "opt.group.refine",
     items: [
-      { key: "collapseBlankLines", label: "빈 줄 축소" },
-      { key: "trimTrailingSpaces", label: "줄끝 공백 제거" },
-      { key: "smartQuotes", label: "둥근 따옴표" },
-      { key: "convertTablesToText", label: "표 → 텍스트" },
+      "collapseBlankLines",
+      "trimTrailingSpaces",
+      "smartQuotes",
+      "convertTablesToText",
     ],
   },
 ];
@@ -41,34 +38,38 @@ const GROUPS: { title: string; items: { key: BoolKey; label: string }[] }[] = [
 export default function OptionsContent() {
   const options = useAppStore((s) => s.options);
   const setOption = useAppStore((s) => s.setOption);
+  const t = useT();
 
   return (
     <div className="flex flex-col gap-5">
       {GROUPS.map((g) => (
-        <div key={g.title}>
+        <div key={g.titleKey}>
           <p className="mb-2 text-[13px] font-semibold tracking-wide text-muted">
-            {g.title}
+            {t(g.titleKey)}
           </p>
           <div className="flex flex-col">
-            {g.items.map((t) => (
-              <div
-                key={t.key}
-                className="flex h-9 items-center justify-between"
-              >
-                <span className="text-sm text-text">{t.label}</span>
-                <Switch
-                  checked={options[t.key]}
-                  onChange={(v) => setOption(t.key, v)}
-                  label={t.label}
-                  hideLabel
-                />
-              </div>
-            ))}
-            {g.title === "구조" && (
+            {g.items.map((key) => {
+              const label = t(`opt.${key}`);
+              return (
+                <div
+                  key={key}
+                  className="flex h-9 items-center justify-between"
+                >
+                  <span className="text-sm text-text">{label}</span>
+                  <Switch
+                    checked={options[key]}
+                    onChange={(v) => setOption(key, v)}
+                    label={label}
+                    hideLabel
+                  />
+                </div>
+              );
+            })}
+            {g.titleKey === "opt.group.structure" && (
               <div className="flex h-9 items-center justify-between">
-                <span className="text-sm text-text">최대 헤더 깊이</span>
+                <span className="text-sm text-text">{t("opt.maxDepth")}</span>
                 <select
-                  aria-label="최대 헤더 깊이"
+                  aria-label={t("opt.maxDepth")}
                   value={options.maxHeadingDepth}
                   onChange={(e) =>
                     setOption(

@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { HelpCircle } from "lucide-react";
+import { useT } from "@/lib/useT";
 
 export default function HelpButton() {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -30,7 +32,7 @@ export default function HelpButton() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label="도움말"
+        aria-label={t("help.aria")}
         aria-expanded={open}
         className="flex h-8 w-8 items-center justify-center rounded-sm text-muted transition-colors hover:bg-surface-2 hover:text-text"
       >
@@ -40,29 +42,25 @@ export default function HelpButton() {
       {open && (
         <div
           role="dialog"
-          aria-label="도움말"
+          aria-label={t("help.aria")}
           className="absolute right-0 top-10 z-20 w-72 rounded-md border border-border bg-surface p-4 text-sm shadow-md"
         >
-          <p className="mb-2 font-medium text-text">
-            이 도구는 AI 답변의 과한 서식·이모지를 정리합니다.
-          </p>
+          <p className="mb-2 font-medium text-text">{t("help.title")}</p>
           <ul className="mb-3 space-y-1 text-muted">
             <li>
               <kbd className="rounded-sm bg-surface-2 px-1.5 py-0.5 text-xs">
                 ⌘V
               </kbd>{" "}
-              왼쪽에 붙여넣기
+              {t("help.paste")}
             </li>
             <li>
               <kbd className="rounded-sm bg-surface-2 px-1.5 py-0.5 text-xs">
                 ⌘C
               </kbd>{" "}
-              결과 복사 (입력 포커스가 아닐 때)
+              {t("help.copy")}
             </li>
           </ul>
-          <p className="text-xs text-faint">
-            모든 변환은 브라우저 안에서만 처리됩니다.
-          </p>
+          <p className="text-xs text-faint">{t("help.privacy")}</p>
           <p className="mt-2 border-t border-border pt-2 text-xs text-faint">
             made by uzzano ·{" "}
             <a

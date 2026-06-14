@@ -2,16 +2,18 @@
 
 import { useEffect, useRef } from "react";
 import { EditorState } from "@codemirror/state";
-import { EditorView, keymap, placeholder } from "@codemirror/view";
+import { EditorView, keymap } from "@codemirror/view";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { markdown } from "@codemirror/lang-markdown";
 import { useAppStore } from "@/store/useAppStore";
+import { useT } from "@/lib/useT";
 
 const DEBOUNCE_MS = 150;
 
 export default function EditorPanel() {
   const input = useAppStore((s) => s.input);
   const setInput = useAppStore((s) => s.setInput);
+  const t = useT();
   const hostRef = useRef<HTMLDivElement | null>(null);
   const viewRef = useRef<EditorView | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -39,7 +41,6 @@ export default function EditorPanel() {
           keymap.of([...defaultKeymap, ...historyKeymap]),
           markdown(),
           EditorView.lineWrapping,
-          placeholder("AI 답변을 여기에 붙여넣으세요 (⌘V)"),
           updateListener,
           EditorView.theme({
             "&": {
@@ -100,15 +101,20 @@ export default function EditorPanel() {
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between px-4 pt-3">
         <span className="text-[13px] font-semibold tracking-wide text-muted">
-          INPUT
+          {t("input.label")}
         </span>
       </div>
       <div className="relative min-h-0 flex-1">
         <div ref={hostRef} className="h-full overflow-hidden" />
+        {input.length === 0 && (
+          <div className="pointer-events-none absolute left-0 top-0 p-6 font-mono text-sm text-faint">
+            {t("input.placeholder")}
+          </div>
+        )}
       </div>
       <div className="flex justify-end gap-3 px-4 py-2 text-xs text-faint">
-        <span>{charCount.toLocaleString()}자</span>
-        <span>{lineCount.toLocaleString()}줄</span>
+        <span>{t("count.chars", { n: charCount.toLocaleString() })}</span>
+        <span>{t("count.lines", { n: lineCount.toLocaleString() })}</span>
       </div>
     </div>
   );

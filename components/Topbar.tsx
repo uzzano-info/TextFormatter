@@ -2,8 +2,10 @@
 
 import { SlidersHorizontal } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
+import { useT } from "@/lib/useT";
 import TemplateMenu from "./TemplateMenu";
 import ThemeToggle from "./ThemeToggle";
+import LanguageToggle from "./LanguageToggle";
 import HelpButton from "./HelpButton";
 
 export default function Topbar() {
@@ -11,6 +13,7 @@ export default function Topbar() {
   const hasInput = useAppStore((s) => s.input.trim().length > 0);
   const optionsOpen = useAppStore((s) => s.optionsOpen);
   const setOptionsOpen = useAppStore((s) => s.setOptionsOpen);
+  const t = useT();
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
@@ -35,9 +38,9 @@ export default function Topbar() {
       {hasInput && detectedSource !== "unknown" && (
         <span
           className="rounded-full bg-surface-2 px-2 py-0.5 text-xs text-muted"
-          title={`${detectedSource} 스타일로 추정 (참고용)`}
+          title={t("detect.tooltip", { src: detectedSource })}
         >
-          AI 답변 형식 감지됨
+          {t("detect.badge")}
         </span>
       )}
 
@@ -46,7 +49,7 @@ export default function Topbar() {
         <button
           type="button"
           onClick={() => setOptionsOpen(!optionsOpen)}
-          aria-label="세부조정"
+          aria-label={t("tune")}
           aria-pressed={optionsOpen}
           className={`flex items-center gap-1.5 rounded-sm border px-2.5 py-1.5 text-sm transition-colors ${
             optionsOpen
@@ -55,8 +58,9 @@ export default function Topbar() {
           }`}
         >
           <SlidersHorizontal size={14} />
-          세부조정
+          {t("tune")}
         </button>
+        <LanguageToggle />
         <ThemeToggle />
         <HelpButton />
       </div>
