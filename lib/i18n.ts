@@ -20,6 +20,10 @@ const en: Dict = {
   // editor
   "input.label": "INPUT",
   "input.placeholder": "Paste an AI answer here (⌘V)",
+  "input.paste": "Paste from clipboard",
+  "input.clear": "Clear",
+  "input.clearAria": "Clear the input",
+  "toast.pasteFail": "Couldn't read the clipboard — paste with ⌘V",
   "count.chars": "{n} chars",
   "count.lines": "{n} lines",
   // gallery
@@ -127,6 +131,10 @@ const ko: Dict = {
   "help.privacy": "모든 변환은 브라우저 안에서만 처리됩니다.",
   "input.label": "INPUT",
   "input.placeholder": "AI 답변을 여기에 붙여넣으세요 (⌘V)",
+  "input.paste": "클립보드에서 붙여넣기",
+  "input.clear": "비우기",
+  "input.clearAria": "입력 비우기",
+  "toast.pasteFail": "클립보드를 읽을 수 없어요 — ⌘V로 붙여넣어 주세요",
   "count.chars": "{n}자",
   "count.lines": "{n}줄",
   "gallery.heading": "어디에 쓸지 고르세요",

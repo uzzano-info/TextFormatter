@@ -5,6 +5,8 @@ import { EditorState } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { markdown } from "@codemirror/lang-markdown";
+import { toast } from "sonner";
+import { ClipboardPaste, X } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { useT } from "@/lib/useT";
 
@@ -20,6 +22,26 @@ export default function EditorPanel() {
 
   const charCount = input.length;
   const lineCount = input ? input.split("\n").length : 0;
+
+  async function handlePaste() {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        setInput(text);
+        viewRef.current?.focus();
+      } else {
+        viewRef.current?.focus();
+      }
+    } catch {
+      viewRef.current?.focus();
+      toast.error(t("toast.pasteFail"));
+    }
+  }
+
+  function handleClear() {
+    setInput("");
+    viewRef.current?.focus();
+  }
 
   useEffect(() => {
     if (!hostRef.current || viewRef.current) return;
@@ -103,12 +125,33 @@ export default function EditorPanel() {
         <span className="text-[13px] font-semibold tracking-wide text-muted">
           {t("input.label")}
         </span>
+        {input.length > 0 && (
+          <button
+            type="button"
+            onClick={handleClear}
+            aria-label={t("input.clearAria")}
+            className="inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-xs text-muted transition-colors hover:bg-surface-2 hover:text-text"
+          >
+            <X size={13} />
+            {t("input.clear")}
+          </button>
+        )}
       </div>
       <div className="relative min-h-0 flex-1">
         <div ref={hostRef} className="h-full overflow-hidden" />
         {input.length === 0 && (
-          <div className="pointer-events-none absolute left-0 top-0 p-6 font-mono text-sm text-faint">
-            {t("input.placeholder")}
+          <div className="absolute left-0 top-0 flex flex-col gap-3 p-6">
+            <span className="pointer-events-none font-mono text-sm text-faint">
+              {t("input.placeholder")}
+            </span>
+            <button
+              type="button"
+              onClick={handlePaste}
+              className="inline-flex w-fit items-center gap-1.5 rounded-sm border border-border bg-surface px-3 py-1.5 text-sm font-medium text-text transition-colors hover:bg-surface-2"
+            >
+              <ClipboardPaste size={15} className="text-accent" />
+              {t("input.paste")}
+            </button>
           </div>
         )}
       </div>
