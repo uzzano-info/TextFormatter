@@ -6,7 +6,6 @@ import { EditorView, keymap, placeholder } from "@codemirror/view";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { markdown } from "@codemirror/lang-markdown";
 import { useAppStore } from "@/store/useAppStore";
-import EmptyState from "./EmptyState";
 
 const DEBOUNCE_MS = 150;
 
@@ -19,7 +18,6 @@ export default function EditorPanel() {
 
   const charCount = input.length;
   const lineCount = input ? input.split("\n").length : 0;
-  const isEmpty = input.trim().length === 0;
 
   useEffect(() => {
     if (!hostRef.current || viewRef.current) return;
@@ -105,11 +103,6 @@ export default function EditorPanel() {
       </div>
       <div className="relative min-h-0 flex-1">
         <div ref={hostRef} className="h-full overflow-hidden" />
-        {isEmpty && (
-          <div className="absolute inset-0">
-            <EmptyState />
-          </div>
-        )}
       </div>
       <div className="flex justify-end gap-3 px-4 py-2 text-xs text-faint">
         <span>{charCount.toLocaleString()}자</span>

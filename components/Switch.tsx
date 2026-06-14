@@ -4,9 +4,15 @@ interface SwitchProps {
   checked: boolean;
   onChange: (v: boolean) => void;
   label: string;
+  hideLabel?: boolean;
 }
 
-export default function Switch({ checked, onChange, label }: SwitchProps) {
+export default function Switch({
+  checked,
+  onChange,
+  label,
+  hideLabel = false,
+}: SwitchProps) {
   return (
     <button
       type="button"
@@ -27,7 +33,7 @@ export default function Switch({ checked, onChange, label }: SwitchProps) {
           }`}
         />
       </span>
-      <span className="whitespace-nowrap">{label}</span>
+      {!hideLabel && <span className="whitespace-nowrap">{label}</span>}
     </button>
   );
 }

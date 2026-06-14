@@ -6,15 +6,32 @@ import { useAppStore } from "@/store/useAppStore";
 import Topbar from "@/components/Topbar";
 import EditorPanel from "@/components/EditorPanel";
 import PreviewPanel from "@/components/PreviewPanel";
-import OptionsBar from "@/components/OptionsBar";
+import OptionsDrawer from "@/components/OptionsDrawer";
 import CopyExportButtons from "@/components/CopyExportButtons";
+import TemplateGallery from "@/components/TemplateGallery";
 
 export default function Home() {
   const hydrate = useAppStore((s) => s.hydrate);
+  const setInput = useAppStore((s) => s.setInput);
+  const hasInput = useAppStore((s) => s.input.trim().length > 0);
 
   useEffect(() => {
     hydrate();
   }, [hydrate]);
+
+  // 갤러리 화면(빈 입력)에서 그냥 붙여넣어도 입력으로 받는다.
+  useEffect(() => {
+    if (hasInput) return;
+    const onPaste = (e: ClipboardEvent) => {
+      const text = e.clipboardData?.getData("text") ?? "";
+      if (text.trim()) {
+        e.preventDefault();
+        setInput(text);
+      }
+    };
+    window.addEventListener("paste", onPaste);
+    return () => window.removeEventListener("paste", onPaste);
+  }, [hasInput, setInput]);
 
   return (
     <main className="flex h-screen flex-col bg-bg">
@@ -22,28 +39,40 @@ export default function Home() {
 
       <Topbar />
 
-      {/* Workbench: 좌(입력) / 우(결과) — 모바일은 상하 분할 */}
-      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <section
-          aria-label="입력 패널"
-          className="flex min-h-0 flex-1 flex-col border-b border-border bg-surface md:flex-none md:basis-1/2 md:border-b-0 md:border-r"
-        >
-          <EditorPanel />
-        </section>
-        <section
-          aria-label="결과 패널"
-          className="flex min-h-0 flex-1 flex-col bg-surface md:flex-none md:basis-1/2"
-        >
-          <PreviewPanel />
-        </section>
+      {/* Workbench + 세부조정 드로어(push) */}
+      <div className="flex min-h-0 flex-1">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col md:flex-row">
+          {hasInput ? (
+            <>
+              <section
+                aria-label="입력 패널"
+                className="flex min-h-0 flex-1 flex-col border-b border-border bg-surface md:flex-none md:basis-1/2 md:border-b-0 md:border-r"
+              >
+                <EditorPanel />
+              </section>
+              <section
+                aria-label="결과 패널"
+                className="flex min-h-0 flex-1 flex-col bg-surface md:flex-none md:basis-1/2"
+              >
+                <PreviewPanel />
+              </section>
+            </>
+          ) : (
+            <section
+              aria-label="템플릿 갤러리"
+              className="flex min-h-0 flex-1 bg-surface"
+            >
+              <TemplateGallery />
+            </section>
+          )}
+        </div>
+
+        <OptionsDrawer />
       </div>
 
-      {/* 옵션바 + 액션바 */}
-      <div className="flex flex-col gap-2 border-t border-border bg-surface-2 px-1 py-1 sm:flex-row sm:items-center sm:justify-between">
-        <OptionsBar />
-        <div className="px-4 pb-2 sm:pb-0">
-          <CopyExportButtons />
-        </div>
+      {/* 액션바 */}
+      <div className="flex items-center justify-end border-t border-border bg-surface-2 px-4 py-2">
+        <CopyExportButtons />
       </div>
 
       {/* 푸터 */}

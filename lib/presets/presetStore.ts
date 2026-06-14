@@ -28,7 +28,15 @@ export function loadUserPresets(): Preset[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter((p): p is Preset => !!p && typeof p.id === "string");
+    return parsed
+      .filter((p): p is Preset => !!p && typeof p.id === "string")
+      .map((p) => ({
+        ...p,
+        // 구버전 저장본에 신규 메타 필드 백필
+        icon: p.icon ?? "star",
+        tagline: p.tagline ?? "내가 저장한 템플릿",
+        targets: Array.isArray(p.targets) ? p.targets : [],
+      }));
   } catch {
     return [];
   }

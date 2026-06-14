@@ -1,7 +1,8 @@
 "use client";
 
+import { SlidersHorizontal } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
-import PresetManager from "./PresetManager";
+import TemplateMenu from "./TemplateMenu";
 import ThemeToggle from "./ThemeToggle";
 import HelpButton from "./HelpButton";
 
@@ -9,6 +10,8 @@ export default function Topbar() {
   const detectedSource = useAppStore((s) => s.detectedSource);
   const detectScore = useAppStore((s) => s.detectScore);
   const hasInput = useAppStore((s) => s.input.trim().length > 0);
+  const optionsOpen = useAppStore((s) => s.optionsOpen);
+  const setOptionsOpen = useAppStore((s) => s.setOptionsOpen);
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
@@ -36,8 +39,22 @@ export default function Topbar() {
         </span>
       )}
 
-      <div className="ml-auto flex items-center gap-1">
-        <PresetManager />
+      <div className="ml-auto flex items-center gap-1.5">
+        <TemplateMenu />
+        <button
+          type="button"
+          onClick={() => setOptionsOpen(!optionsOpen)}
+          aria-label="세부조정"
+          aria-pressed={optionsOpen}
+          className={`flex items-center gap-1.5 rounded-sm border px-2.5 py-1.5 text-sm transition-colors ${
+            optionsOpen
+              ? "border-accent bg-accent-soft text-accent"
+              : "border-border bg-surface text-muted hover:bg-surface-2 hover:text-text"
+          }`}
+        >
+          <SlidersHorizontal size={14} />
+          세부조정
+        </button>
         <ThemeToggle />
         <HelpButton />
       </div>

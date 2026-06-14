@@ -37,6 +37,10 @@ export const DEFAULT_OPTIONS: NormalizeOptions = {
 export interface Preset {
   id: string;
   name: string;
+  icon: string; // lucide 아이콘 이름
+  tagline: string; // 카드 한 줄 설명
+  targets: string[]; // 대상 앱 (예: ['네이버','티스토리'])
+  recommended?: boolean; // 카드 "추천" 배지
   options: NormalizeOptions;
   outputFormat: OutputFormat;
   blogTarget?: BlogTarget;

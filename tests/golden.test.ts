@@ -7,7 +7,7 @@ import {
   geminiSample,
 } from "./fixtures/samples";
 
-const cleanMemo = DEFAULT_PRESETS[0]; // 깔끔한 메모
+const cleanMemo = DEFAULT_PRESETS.find((p) => p.id === "tpl-note")!; // 깔끔한 메모
 
 describe("골든 스냅샷 - 깔끔한 메모 프리셋", () => {
   it("chatgpt 샘플", () => {
@@ -40,7 +40,7 @@ describe("골든 스냅샷 - 깔끔한 메모 프리셋", () => {
 
 describe("골든 스냅샷 - 블로그(네이버)", () => {
   it("claude 샘플 표 → 텍스트", () => {
-    const blog = DEFAULT_PRESETS[1];
+    const blog = DEFAULT_PRESETS.find((p) => p.id === "tpl-blog")!;
     const out = runPipeline(
       claudeSample,
       blog.options,
