@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`runPipeline > markdown 라운드트립 스냅샷 1`] = `
+"# 제목
+
+안녕하세요. 본문입니다.
+
+- 항목 1
+- 항목 2
+"
+`;
