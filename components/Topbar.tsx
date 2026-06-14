@@ -8,7 +8,6 @@ import HelpButton from "./HelpButton";
 
 export default function Topbar() {
   const detectedSource = useAppStore((s) => s.detectedSource);
-  const detectScore = useAppStore((s) => s.detectScore);
   const hasInput = useAppStore((s) => s.input.trim().length > 0);
   const optionsOpen = useAppStore((s) => s.optionsOpen);
   const setOptionsOpen = useAppStore((s) => s.setOptionsOpen);
@@ -34,8 +33,11 @@ export default function Topbar() {
       </div>
 
       {hasInput && detectedSource !== "unknown" && (
-        <span className="rounded-full bg-surface-2 px-2 py-0.5 text-xs text-muted">
-          {detectedSource} 감지 · {Math.round(detectScore * 100)}%
+        <span
+          className="rounded-full bg-surface-2 px-2 py-0.5 text-xs text-muted"
+          title={`${detectedSource} 스타일로 추정 (참고용)`}
+        >
+          AI 답변 형식 감지됨
         </span>
       )}
 

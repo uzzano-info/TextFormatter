@@ -39,7 +39,7 @@ export default function EditorPanel() {
           keymap.of([...defaultKeymap, ...historyKeymap]),
           markdown(),
           EditorView.lineWrapping,
-          placeholder(""),
+          placeholder("AI 답변을 여기에 붙여넣으세요 (⌘V)"),
           updateListener,
           EditorView.theme({
             "&": {
@@ -72,6 +72,8 @@ export default function EditorPanel() {
       }),
     });
     viewRef.current = view;
+    // 빈 상태로 시작하면 바로 붙여넣을 수 있도록 포커스
+    if (!useAppStore.getState().input) view.focus();
 
     return () => {
       if (timer.current) clearTimeout(timer.current);

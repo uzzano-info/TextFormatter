@@ -19,15 +19,7 @@ export default function TemplateCard({
   onSelect,
   onKeyNav,
 }: Props) {
-  const preview = useMemo(
-    () =>
-      miniPreview(
-        preset.options,
-        preset.outputFormat,
-        preset.blogTarget ?? "naver",
-      ),
-    [preset],
-  );
+  const preview = useMemo(() => miniPreview(preset), [preset]);
 
   return (
     <div

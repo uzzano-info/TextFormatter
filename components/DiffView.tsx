@@ -26,8 +26,16 @@ export default function DiffView() {
   }
 
   return (
-    <pre className="mx-auto max-w-prose whitespace-pre-wrap break-words font-mono text-sm leading-relaxed text-text">
-      {segments.map((seg, i) => {
+    <div className="mx-auto max-w-prose">
+      <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
+        <span>원문에서 무엇이 정리됐는지 보여줍니다</span>
+        <span className="inline-flex items-center gap-1">
+          <span className="diff-remove px-1">제거</span>
+          <span className="diff-change px-1">변경</span>
+        </span>
+      </div>
+      <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed text-text">
+        {segments.map((seg, i) => {
         if (seg.op === "equal") return <span key={i}>{seg.text}</span>;
         if (seg.op === "remove")
           return (
@@ -51,6 +59,7 @@ export default function DiffView() {
           </span>
         );
       })}
-    </pre>
+      </pre>
+    </div>
   );
 }

@@ -12,26 +12,11 @@ import TemplateGallery from "@/components/TemplateGallery";
 
 export default function Home() {
   const hydrate = useAppStore((s) => s.hydrate);
-  const setInput = useAppStore((s) => s.setInput);
   const hasInput = useAppStore((s) => s.input.trim().length > 0);
 
   useEffect(() => {
     hydrate();
   }, [hydrate]);
-
-  // 갤러리 화면(빈 입력)에서 그냥 붙여넣어도 입력으로 받는다.
-  useEffect(() => {
-    if (hasInput) return;
-    const onPaste = (e: ClipboardEvent) => {
-      const text = e.clipboardData?.getData("text") ?? "";
-      if (text.trim()) {
-        e.preventDefault();
-        setInput(text);
-      }
-    };
-    window.addEventListener("paste", onPaste);
-    return () => window.removeEventListener("paste", onPaste);
-  }, [hasInput, setInput]);
 
   return (
     <main className="flex h-screen flex-col bg-bg">
@@ -42,29 +27,21 @@ export default function Home() {
       {/* Workbench + 세부조정 드로어(push) */}
       <div className="flex min-h-0 flex-1">
         <div className="flex min-h-0 min-w-0 flex-1 flex-col md:flex-row">
-          {hasInput ? (
-            <>
-              <section
-                aria-label="입력 패널"
-                className="flex min-h-0 flex-1 flex-col border-b border-border bg-surface md:flex-none md:basis-1/2 md:border-b-0 md:border-r"
-              >
-                <EditorPanel />
-              </section>
-              <section
-                aria-label="결과 패널"
-                className="flex min-h-0 flex-1 flex-col bg-surface md:flex-none md:basis-1/2"
-              >
-                <PreviewPanel />
-              </section>
-            </>
-          ) : (
-            <section
-              aria-label="템플릿 갤러리"
-              className="flex min-h-0 flex-1 bg-surface"
-            >
-              <TemplateGallery />
-            </section>
-          )}
+          {/* 입력은 항상 보인다 */}
+          <section
+            aria-label="입력 패널"
+            className="flex min-h-0 flex-1 flex-col border-b border-border bg-surface md:flex-none md:basis-1/2 md:border-b-0 md:border-r"
+          >
+            <EditorPanel />
+          </section>
+
+          {/* 오른쪽만 갤러리 ↔ 결과 전환 */}
+          <section
+            aria-label={hasInput ? "결과 패널" : "템플릿 갤러리"}
+            className="flex min-h-0 flex-1 flex-col bg-surface md:flex-none md:basis-1/2"
+          >
+            {hasInput ? <PreviewPanel /> : <TemplateGallery />}
+          </section>
         </div>
 
         <OptionsDrawer />
