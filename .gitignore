@@ -6,8 +6,8 @@ dist
 .DS_Store
 .env*
 
-# Claude Code local settings
-.claude/settings.local.json
+# Claude Code / 로컬 개발 도구 설정 (머신 종속)
+.claude/
 
 # TS build info
 *.tsbuildinfo

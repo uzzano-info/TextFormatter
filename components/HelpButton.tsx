@@ -63,6 +63,15 @@ export default function HelpButton() {
           <p className="text-xs text-faint">
             모든 변환은 브라우저 안에서만 처리됩니다.
           </p>
+          <p className="mt-2 border-t border-border pt-2 text-xs text-faint">
+            made by uzzano ·{" "}
+            <a
+              href="mailto:uzzano.info@gmail.com"
+              className="underline hover:text-text"
+            >
+              uzzano.info@gmail.com
+            </a>
+          </p>
         </div>
       )}
     </div>

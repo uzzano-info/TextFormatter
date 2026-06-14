@@ -1,4 +1,4 @@
-# 정제기 — AI Text Formatter
+# AI Text Formatter — by uzzano
 
 여러 AI 서비스(ChatGPT, Claude, Gemini 등)가 출력한 텍스트를 붙여넣으면, 과한
 마크다운·이모지·서식을 정리하고 사용자 스타일로 정규화하여 블로그/메모/플레인텍스트
@@ -43,10 +43,31 @@ unified/remark/rehype · Zustand · Vitest
 ```bash
 npm install      # 의존성 설치
 npm run dev      # 개발 서버 (http://localhost:3000)
-npm run build    # 프로덕션 빌드
+npm run build    # 정적 빌드 → out/ 디렉터리 생성
 npm test         # 단위/스냅샷 테스트 (Vitest)
 npm run typecheck
 ```
+
+## 배포
+
+이 앱은 서버가 필요 없는 **정적 사이트**입니다 (`next.config.mjs`의 `output: 'export'`).
+
+```bash
+npm run build    # out/ 에 정적 파일 생성
+```
+
+`out/` 디렉터리를 정적 호스팅(Vercel, Netlify, GitHub Pages, Cloudflare Pages 등)에
+올리면 됩니다. 서버 런타임이 없어 서버측 공격면이 없습니다.
+
+> 호스팅에서 보안 헤더(`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`,
+> `Referrer-Policy: no-referrer` 등)를 설정하는 것을 권장합니다.
+
+## 보안 / 프라이버시
+
+- 입력 텍스트는 **외부로 전송되지 않으며**, 서버·DB·로그인이 없습니다.
+- 붙여넣은 HTML은 `rehype-sanitize`로 정화되어 스크립트/이벤트 핸들러가 제거됩니다.
+- 정적 export로 배포되어 Next.js 서버 기능(이미지 최적화, RSC 서버, 미들웨어 등)을
+  사용하지 않습니다.
 
 ## 테스트
 
@@ -74,3 +95,8 @@ tests/                단위/스냅샷/골든 테스트
 - HTML로 붙여넣은 입력의 mdast 역변환은 무손실이 아닙니다. 복잡한 표(colspan/rowspan),
   중첩 인라인 스타일, `<div>` 레이아웃 등은 단순화될 수 있습니다(설계상 한계).
   손실 위험이 큰 구조가 감지되면 "일부 서식은 단순화되었습니다" 경고만 표시합니다.
+
+## 라이선스 · 문의
+
+- License: [MIT](./LICENSE) © uzzano
+- 문의: uzzano.info@gmail.com

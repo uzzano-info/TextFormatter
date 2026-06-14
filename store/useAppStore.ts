@@ -212,13 +212,6 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   hydrate: () => {
-    if (
-      typeof window !== "undefined" &&
-      process.env.NODE_ENV !== "production"
-    ) {
-      // 개발용 디버그 핸들 (프로덕션 빌드에는 포함되지 않음)
-      (window as unknown as { __appStore?: unknown }).__appStore = useAppStore;
-    }
     const userPresets = loadUserPresets();
     const presets = [...DEFAULT_PRESETS, ...userPresets];
     const last = loadLastState();

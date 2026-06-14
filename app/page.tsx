@@ -53,9 +53,21 @@ export default function Home() {
       </div>
 
       {/* 푸터 */}
-      <footer className="border-t border-border bg-surface px-4 py-1.5 text-center text-xs text-muted">
-        이 도구의 모든 변환은 당신의 브라우저 안에서만 처리됩니다. 입력한 텍스트는
-        어디에도 전송·저장되지 않습니다.
+      <footer className="flex flex-wrap items-center justify-center gap-x-3 gap-y-0.5 border-t border-border bg-surface px-4 py-1.5 text-center text-xs text-muted">
+        <span>
+          이 도구의 모든 변환은 당신의 브라우저 안에서만 처리됩니다. 입력한
+          텍스트는 어디에도 전송·저장되지 않습니다.
+        </span>
+        <span className="text-faint">·</span>
+        <span>
+          © uzzano ·{" "}
+          <a
+            href="mailto:uzzano.info@gmail.com"
+            className="underline hover:text-text"
+          >
+            문의
+          </a>
+        </span>
       </footer>
     </main>
   );

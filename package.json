@@ -1,7 +1,10 @@
 {
-  "name": "ai-text-formatter",
+  "name": "uzzano-ai-text-formatter",
   "version": "1.0.0",
   "private": true,
+  "description": "AI가 출력한 텍스트의 과한 마크다운·이모지·서식을 정리해 블로그·메모·플레인으로 내보내는 브라우저 편집기.",
+  "author": "uzzano <uzzano.info@gmail.com>",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -18,8 +21,8 @@
     "@codemirror/view": "6.28.4",
     "lucide-react": "^0.408.0",
     "mdast-util-to-string": "4.0.0",
-    "nanoid": "5.0.7",
-    "next": "14.2.5",
+    "nanoid": "^5.1.11",
+    "next": "^14.2.35",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "rehype-parse": "9.0.0",
