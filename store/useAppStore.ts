@@ -11,6 +11,12 @@ import {
 import { runPipeline } from "@/lib/transform/runPipeline";
 import { detectSource } from "@/lib/transform/detectSource";
 import {
+  computeStats,
+  CleanupStats,
+  EMPTY_STATS,
+} from "@/lib/transform/computeStats";
+import { SAMPLE_INPUT } from "@/lib/sampleInput";
+import {
   DEFAULT_PRESETS,
   DEFAULT_PRESET_ID,
 } from "@/lib/presets/defaultPresets";
@@ -31,12 +37,17 @@ interface AppState {
   activePresetId: string | null;
   presets: Preset[];
 
+  viewMode: "clean" | "diff";
+
   // 파생 결과 (직접 set 금지 — recompute로만 갱신)
   output: string;
   warnedSimplified: boolean;
   fallback: boolean;
+  stats: CleanupStats;
 
   setInput: (v: string) => void;
+  setViewMode: (m: "clean" | "diff") => void;
+  loadSample: () => void;
   setOption: <K extends keyof NormalizeOptions>(
     key: K,
     value: NormalizeOptions[K],
@@ -61,6 +72,7 @@ function compute(
     output: r.output,
     warnedSimplified: r.warnedSimplified,
     fallback: r.fallback,
+    stats: computeStats(input, options),
   };
 }
 
@@ -82,9 +94,17 @@ export const useAppStore = create<AppState>((set, get) => ({
   blogTarget: "naver",
   activePresetId: DEFAULT_PRESET_ID,
   presets: DEFAULT_PRESETS,
+  viewMode: "clean",
   output: "",
   warnedSimplified: false,
   fallback: false,
+  stats: EMPTY_STATS,
+
+  setViewMode: (m) => set({ viewMode: m }),
+
+  loadSample: () => {
+    get().setInput(SAMPLE_INPUT);
+  },
 
   setInput: (v) => {
     const { options, outputFormat, blogTarget } = get();

@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { Copy, Check, Download, ChevronDown, CornerUpLeft } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
+import type { OutputFormat } from "@/lib/transform/types";
 
 function download(filename: string, content: string, mime: string) {
   const blob = new Blob([content], { type: mime });
@@ -15,11 +18,48 @@ function download(filename: string, content: string, mime: string) {
   URL.revokeObjectURL(url);
 }
 
+const EXPORTS: { ext: string; mime: string; label: string }[] = [
+  { ext: "md", mime: "text/markdown", label: "Markdown (.md)" },
+  { ext: "txt", mime: "text/plain", label: "Plain (.txt)" },
+  { ext: "html", mime: "text/html", label: "HTML (.html)" },
+];
+
 export default function CopyExportButtons() {
   const output = useAppStore((s) => s.output);
   const outputFormat = useAppStore((s) => s.outputFormat);
   const sendOutputToInput = useAppStore((s) => s.sendOutputToInput);
   const disabled = output.trim().length === 0;
+
+  const [copied, setCopied] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node))
+        setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [menuOpen]);
+
+  // ⌘/Ctrl+C 로 결과 복사 (입력 포커스가 아닐 때)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "c") {
+        const sel = window.getSelection()?.toString();
+        const inEditor = (e.target as HTMLElement)?.closest?.(".cm-editor");
+        if (!sel && !inEditor && !disabled) {
+          e.preventDefault();
+          void handleCopy();
+        }
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [output, outputFormat, disabled]);
 
   async function handleCopy() {
     try {
@@ -32,54 +72,84 @@ export default function CopyExportButtons() {
       } else {
         await navigator.clipboard.writeText(output);
       }
-      toast.success("복사되었습니다");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
     } catch {
       toast.error("복사에 실패했습니다");
     }
   }
 
-  function handleExport() {
-    const map = {
-      markdown: { ext: "md", mime: "text/markdown" },
-      html: { ext: "html", mime: "text/html" },
-      plain: { ext: "txt", mime: "text/plain" },
-      blog: { ext: "txt", mime: "text/plain" },
-    } as const;
-    const { ext, mime } = map[outputFormat];
-    download(`formatted.${ext}`, output, `${mime};charset=utf-8`);
-    toast.success(`.${ext} 파일을 내보냈습니다`);
+  function handleExport(fmt: { ext: string; mime: string }) {
+    download(`formatted.${fmt.ext}`, output, `${fmt.mime};charset=utf-8`);
+    toast.success(`.${fmt.ext} 파일을 내보냈습니다`);
+    setMenuOpen(false);
   }
 
-  const btn =
-    "rounded-md border px-3 py-1 text-sm transition disabled:cursor-not-allowed disabled:opacity-40";
+  // 현재 포맷에 맞는 기본 확장자를 목록 맨 앞으로
+  const defaultExt: Record<OutputFormat, string> = {
+    markdown: "md",
+    html: "html",
+    plain: "txt",
+    blog: "txt",
+  };
+  const ordered = [...EXPORTS].sort((a, b) =>
+    a.ext === defaultExt[outputFormat]
+      ? -1
+      : b.ext === defaultExt[outputFormat]
+        ? 1
+        : 0,
+  );
 
   return (
-    <div className="flex gap-2">
+    <div className="flex items-center gap-2">
       <button
         type="button"
         aria-label="결과 복사"
         onClick={handleCopy}
         disabled={disabled}
-        className={`${btn} border-slate-900 bg-slate-900 text-white hover:bg-slate-700`}
+        className="inline-flex items-center gap-1.5 rounded-sm bg-accent px-3 py-1.5 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
       >
-        복사
+        {copied ? <Check size={15} /> : <Copy size={15} />}
+        {copied ? "복사됨" : "복사"}
       </button>
-      <button
-        type="button"
-        aria-label="파일로 내보내기"
-        onClick={handleExport}
-        disabled={disabled}
-        className={`${btn} border-slate-300 bg-white text-slate-700 hover:bg-slate-50`}
-      >
-        내보내기
-      </button>
+
+      <div className="relative" ref={menuRef}>
+        <button
+          type="button"
+          aria-label="내보내기"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
+          disabled={disabled}
+          className="inline-flex items-center gap-1 rounded-sm border border-border bg-surface px-3 py-1.5 text-sm text-text transition-colors hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <Download size={15} />
+          내보내기
+          <ChevronDown size={13} className="text-muted" />
+        </button>
+        {menuOpen && (
+          <div className="absolute right-0 top-10 z-20 w-44 rounded-md border border-border bg-surface p-1 shadow-md">
+            {ordered.map((f) => (
+              <button
+                key={f.ext}
+                type="button"
+                onClick={() => handleExport(f)}
+                className="block w-full rounded-sm px-2 py-1.5 text-left text-sm text-text hover:bg-surface-2"
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
       <button
         type="button"
         aria-label="결과를 입력으로 보내기"
         onClick={sendOutputToInput}
         disabled={disabled}
-        className={`${btn} border-slate-300 bg-white text-slate-700 hover:bg-slate-50`}
+        className="inline-flex items-center gap-1.5 rounded-sm px-2 py-1.5 text-sm text-muted transition-colors hover:bg-surface-2 hover:text-text disabled:cursor-not-allowed disabled:opacity-40"
       >
+        <CornerUpLeft size={15} />
         입력으로 보내기
       </button>
     </div>

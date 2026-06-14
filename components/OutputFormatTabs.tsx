@@ -17,36 +17,51 @@ export default function OutputFormatTabs() {
   const setBlogTarget = useAppStore((s) => s.setBlogTarget);
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex rounded-md border border-slate-200 bg-slate-100 p-0.5">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            aria-label={`${t.label} 포맷`}
-            aria-pressed={outputFormat === t.id}
-            onClick={() => setFormat(t.id)}
-            className={`rounded px-3 py-1 text-sm transition ${
-              outputFormat === t.id
-                ? "bg-white font-medium text-slate-900 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
+    <div className="flex items-center gap-3">
+      <div role="tablist" className="flex items-center gap-1">
+        {TABS.map((t) => {
+          const activeTab = outputFormat === t.id;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab}
+              aria-label={`${t.label} 포맷`}
+              onClick={() => setFormat(t.id)}
+              className={`relative px-2 py-1.5 text-sm transition-colors ${
+                activeTab
+                  ? "font-medium text-text"
+                  : "text-muted hover:text-text"
+              }`}
+            >
+              {t.label}
+              {activeTab && (
+                <span className="absolute inset-x-1 -bottom-px h-0.5 rounded-full bg-accent" />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {outputFormat === "blog" && (
-        <select
-          aria-label="블로그 대상 선택"
-          value={blogTarget}
-          onChange={(e) => setBlogTarget(e.target.value as "naver" | "tistory")}
-          className="rounded-md border border-slate-200 bg-white px-2 py-1 text-sm"
-        >
-          <option value="naver">네이버</option>
-          <option value="tistory">티스토리</option>
-        </select>
+        <div className="flex items-center gap-1">
+          {(["naver", "tistory"] as const).map((t) => (
+            <button
+              key={t}
+              type="button"
+              aria-pressed={blogTarget === t}
+              onClick={() => setBlogTarget(t)}
+              className={`rounded-full px-2 py-0.5 text-xs transition-colors ${
+                blogTarget === t
+                  ? "bg-accent-soft text-accent"
+                  : "bg-surface-2 text-muted hover:text-text"
+              }`}
+            >
+              {t === "naver" ? "네이버" : "티스토리"}
+            </button>
+          ))}
+        </div>
       )}
     </div>
   );

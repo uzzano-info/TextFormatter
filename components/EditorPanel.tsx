@@ -6,6 +6,7 @@ import { EditorView, keymap, placeholder } from "@codemirror/view";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { markdown } from "@codemirror/lang-markdown";
 import { useAppStore } from "@/store/useAppStore";
+import EmptyState from "./EmptyState";
 
 const DEBOUNCE_MS = 150;
 
@@ -16,22 +17,19 @@ export default function EditorPanel() {
   const viewRef = useRef<EditorView | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 카운터는 store input 기준으로 표시
   const charCount = input.length;
   const lineCount = input ? input.split("\n").length : 0;
+  const isEmpty = input.trim().length === 0;
 
   useEffect(() => {
     if (!hostRef.current || viewRef.current) return;
 
     const updateListener = EditorView.updateListener.of((u) => {
       if (!u.docChanged) return;
-      // IME 조합 중에는 반영하지 않는다 (조합 종료 후에만)
-      if (u.view.composing) return;
+      if (u.view.composing) return; // IME 조합 중 미반영
       const value = u.state.doc.toString();
       if (timer.current) clearTimeout(timer.current);
-      timer.current = setTimeout(() => {
-        setInput(value);
-      }, DEBOUNCE_MS);
+      timer.current = setTimeout(() => setInput(value), DEBOUNCE_MS);
     });
 
     const view = new EditorView({
@@ -43,18 +41,28 @@ export default function EditorPanel() {
           keymap.of([...defaultKeymap, ...historyKeymap]),
           markdown(),
           EditorView.lineWrapping,
-          placeholder("AI 답변을 여기에 붙여넣으세요 (Ctrl/Cmd+V)"),
+          placeholder(""),
           updateListener,
           EditorView.theme({
-            "&": { height: "100%", fontSize: "14px" },
+            "&": {
+              height: "100%",
+              fontSize: "14px",
+              color: "var(--text)",
+              backgroundColor: "transparent",
+            },
             ".cm-scroller": {
-              fontFamily:
-                "ui-monospace, SFMono-Regular, Menlo, monospace",
+              fontFamily: "var(--font-mono)",
+              lineHeight: "1.7",
               overflow: "auto",
             },
-            ".cm-content": { padding: "12px" },
+            ".cm-content": { padding: "24px", caretColor: "var(--accent)" },
+            ".cm-cursor": { borderLeftColor: "var(--accent)" },
+            "&.cm-focused": { outline: "none" },
+            ".cm-selectionBackground, ::selection": {
+              backgroundColor: "var(--accent-soft)",
+            },
+            ".cm-activeLine": { backgroundColor: "transparent" },
           }),
-          // IME 조합 종료 시 즉시 반영
           EditorView.domEventHandlers({
             compositionend: (_e, view) => {
               if (timer.current) clearTimeout(timer.current);
@@ -75,7 +83,7 @@ export default function EditorPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 외부(예: sendOutputToInput)에서 input이 바뀌면 에디터 문서를 동기화
+  // 외부(예: 예시 로드, sendOutputToInput)에서 input 변경 시 동기화
   useEffect(() => {
     const view = viewRef.current;
     if (!view) return;
@@ -90,8 +98,20 @@ export default function EditorPanel() {
 
   return (
     <div className="flex h-full flex-col">
-      <div ref={hostRef} className="min-h-0 flex-1 overflow-hidden" />
-      <div className="flex justify-end gap-3 border-t border-slate-200 px-3 py-1 text-xs text-slate-500">
+      <div className="flex items-center justify-between px-4 pt-3">
+        <span className="text-[13px] font-semibold tracking-wide text-muted">
+          INPUT
+        </span>
+      </div>
+      <div className="relative min-h-0 flex-1">
+        <div ref={hostRef} className="h-full overflow-hidden" />
+        {isEmpty && (
+          <div className="absolute inset-0">
+            <EmptyState />
+          </div>
+        )}
+      </div>
+      <div className="flex justify-end gap-3 px-4 py-2 text-xs text-faint">
         <span>{charCount.toLocaleString()}자</span>
         <span>{lineCount.toLocaleString()}줄</span>
       </div>
