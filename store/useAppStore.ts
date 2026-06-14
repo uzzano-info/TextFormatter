@@ -105,7 +105,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   modified: false,
   presets: DEFAULT_PRESETS,
   viewMode: "clean",
-  optionsOpen: false,
+  optionsOpen: true,
   lang: DEFAULT_LANG,
   output: "",
   warnedSimplified: false,
