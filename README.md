@@ -1,4 +1,4 @@
-# AI Text Formatter — by uzzano
+# AI Text Formatter
 
 여러 AI 서비스(ChatGPT, Claude, Gemini 등)가 출력한 텍스트를 붙여넣으면, 과한
 마크다운·이모지·서식을 정리하고 사용자 스타일로 정규화하여 블로그/메모/플레인텍스트
