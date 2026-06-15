@@ -7,6 +7,8 @@
 모든 변환은 **브라우저 안에서만** 처리됩니다. 입력한 텍스트는 어디에도
 전송·저장되지 않습니다 (백엔드/DB/로그인 없음).
 
+https://textformatter-eight.vercel.app/
+
 <img width="1176" height="985" alt="image" src="https://github.com/user-attachments/assets/90ef628c-1eaa-473c-9daf-50e095ad5c54" />
 
 
