@@ -3,7 +3,7 @@ import type { Root } from "mdast";
 import type { NormalizeOptions } from "../types";
 
 // 유니코드 이모지 정규식 (Extended_Pictographic + 변형선택자/ZWJ)
-const EMOJI_RE = /[\p{Extended_Pictographic}\u{FE0F}\u{200D}]/gu;
+const EMOJI_RE = /[\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{20E3}]/gu;
 
 /**
  * 이모지 제거.

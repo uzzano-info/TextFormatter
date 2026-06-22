@@ -70,7 +70,7 @@ export const DEFAULT_PRESETS: Preset[] = [
     tagline: "옵시디언·노션에 정리하기 좋게 마크다운 다듬기",
     targets: ["Obsidian", "Notion", "Bear"],
     options: NOTE,
-    outputFormat: "markdown",
+    outputFormat: "plain",
     builtIn: true,
     createdAt: 0,
   },
